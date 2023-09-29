@@ -1,0 +1,17 @@
+
+.container {
+    background-color: #e4ffbc;
+    justify-content: center;
+    display: flex;
+    max-width: 400px;
+    margin: 20px auto; 
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+
+.card:last-child {
+    margin-bottom: 0;
+}

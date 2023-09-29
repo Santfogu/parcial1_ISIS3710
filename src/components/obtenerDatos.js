@@ -76,6 +76,15 @@ const [data, setData] = useState([]);
       </div>
     );
   }
+
+  const [cafes, setCafes] = useState([]);
+    useEffect(()=>{
+       const URL = "http://localhost:3001/cafes";
+       fetch(URL).then(data => data.json()).then(data => {
+           setCafes(JSON.stringify(data));
+       })
+   }, []);
+
   
   export default App;
 

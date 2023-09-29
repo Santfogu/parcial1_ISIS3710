@@ -1,2 +1,12 @@
 
-  
+.titulo{
+
+    align-self: left;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+
+.botones {
+    padding-left: 30px;
+}
