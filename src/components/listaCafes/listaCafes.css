@@ -1,17 +1,14 @@
 
-.container {
-    background-color: #e4ffbc;
-    justify-content: center;
+.contenido {
     display: flex;
-    max-width: 400px;
-    margin: 20px auto; 
+    justify-content: space-between;
+    width: 100%;
 }
 
-.card {
-    margin-bottom: 20px;
+.tablita {
+    width: 60%;
 }
 
-
-.card:last-child {
-    margin-bottom: 0;
+.detalle {
+    width: 30%;
 }

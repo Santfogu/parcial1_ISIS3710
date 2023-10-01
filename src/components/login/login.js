@@ -1,82 +1,91 @@
 import './login.css'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useIntl } from 'react-intl';
 
 
 function Login() {
+  
+  
+    const intl = useIntl();
 
 
-    const [dataPOST, setDataPOST] = useState("{}")
-    const [dataGET, setDataGet] = useState("{}")
-    const API_KEY = ""
+    const [formValues, setFormValues] = useState({login:"", password:""});
   
-    const exampleJSON = { "id": 1, "first_name": "Erwin", "last_name": "Mangeney", "email": "emangeney0@unicef.org", "gender": "Polygender", "ip_address": "75.180.222.81", "test_input": "#$%&/" }
+    const [validationStates, setValidationStates] = useState({userState:true});
   
-    async function handlePost() {
-      const response = await fetch("https://localhost:3001/login", { method: "POST", body: JSON.stringify(exampleJSON), headers: {"X-Requested-With": "XMLHttpRequest"} })
-      const dataa = await response.json()
-      console.log(dataa)
-      setDataPOST(JSON.stringify(dataa))
-    };
-  
-    useEffect(()=>{
-      fetch("http://localhost:3001/login").then(response => response.json()).then(data => setDataGet(JSON.stringify(data)))
-    },[dataPOST])
+    const [redirectToCafes, setRedirectToCafes] = useState(false);
 
-
-    const [formValues, setFormValues] = useState({user:"", password:""});
-  
-    const [validationStates, setValidationStates] = useState({userState:false, passwordState:false});
-  
   
     const handleUserChange = ((e) => {
-      setFormValues({...formValues, user: e.target.value})
+      setFormValues({...formValues, login: e.target.value})
     });
    
     const handlePasswordChange = ((e) => {
       setFormValues({...formValues, password: e.target.value})
     });
    
+    const clickEliminar = () => {
+      const formulario = document.getElementById("formulario");
+      formulario.reset();
+    }
   
-    const clickSubmit = (() => {
-      if (formValues.user == dataGET.user && formValues.password == dataGET.password)
-      {
-        setValidationStates({userState: true, passwordState: true});
+    const clickSubmit = async () => {
+      try {
+        console.log('Solicitud POST:', JSON.stringify(formValues));
+        const response = await fetch("http://localhost:3001/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formValues),
+        });
+        console.log('Respuesta del servidor:', response);
   
+        if (response.status === 200) {
+          setValidationStates({ userState: true });
+          setRedirectToCafes(true);
+        } else if (response.status === 401) {
+          setValidationStates({ userState: false });
+        }
+      } catch (error) {
+        console.error('Error:', error);
       }
-    })
+    };
   
-  
+    if (redirectToCafes) {
+      return <Navigate to="/cafes" />;
+    }
   
     return (
       <div>
-        <h3 className='titulo'>Inicio de sesión</h3>
-       
-        <Form>
-        <Form.Group className="mb-6" controlId="formBasicUser">
-          <Form.Label>Nombre de usuario</Form.Label>
-          <Form.Control type="user" placeholder="Enter usuario" onChange={handleUserChange} value={formValues.user}/>
+        <h6 className='titulo'>{intl.formatMessage({ id: "Inicio de sesión" })}</h6>
+        <div className='formulario'>
+        <Form id='formulario'>
+        <Form.Group className="mb-6 formulario-contenido" controlId="formBasicUsername">
+          <Form.Label>{intl.formatMessage({ id: "Nombre de usuario" })}</Form.Label>
+          <Form.Control type="text" onChange={handleUserChange} value={formValues.login}/>
         </Form.Group>
    
-        <Form.Group className="mb-3" controlId="formBasicPassword">
-          <Form.Label>Contraseña</Form.Label>
-          <Form.Control type="password" placeholder="Password" onChange={handlePasswordChange} value={formValues.password} />
-          { !validationStates.passwordState && <Form.Text className="text-muted">Your password should be have numbers and letters and should be at least 9 char long</Form.Text>}
+        <Form.Group className="mb-3 formulario-contenido" controlId="formBasicPassword">
+          <Form.Label>{intl.formatMessage({ id: "Contraseña" })}</Form.Label>
+          <Form.Control type="password" onChange={handlePasswordChange} value={formValues.password} />
         </Form.Group>
-        
-        <Button variant="primary" onClick={clickSubmit} classname='botones'>
-            <Link to={"/libros"}>
-                Ingresar
-            </Link>
+        <div className='botones'>
+        <Button variant="success" onClick={clickSubmit} className='btn'>
+            <span className="text-dark">{intl.formatMessage({ id: "Ingresar" })}</span>
         </Button>
-        <Button variant="primary" onClick={clickSubmit}>
-            <Link to={"/"}>
-                Cancelar
-            </Link>
+        <Button variant="danger" onClick={clickEliminar} className='btn'>
+            <span className="text-dark">{intl.formatMessage({ id: "Cancelar" })}</span>
         </Button>
+        </div>
+        <p className='mensaje'>
+        { !validationStates.userState && <Form.Text className="text-muted">{intl.formatMessage({ id: "Error de autenticación. Revise sus credenciales" })}</Form.Text>}
+        </p>
       </Form>
+      </div>
       </div>
     );
   

@@ -1,12 +1,47 @@
-
 .titulo{
-
     align-self: left;
     position: relative;
     padding-bottom: 20px;
+    margin-left: 15%;
+    font-weight: bold;
+}
+
+
+.formulario {
+    border-width: 3px;
+    border-color: black;
+    border-style: solid;
+    background-color: #f9f1f1;
+    padding: 30px;
+    justify-content: center;
+    align-items: center; 
+    width: 70%;
+    margin-left: 15%;
+    font-weight: bold;
+}
+
+.formulario-contenido{
+    width: 70%;
+    margin-left: 15%;
 }
 
 
 .botones {
-    padding-left: 30px;
+    justify-content: space-between;
+    align-items: center; 
+    display: flex;
+    width: 70%;
+    margin-left: 15%;
+    font-weight: bold;
+}
+
+
+.btn {
+    width: 40%;
+}
+
+
+.mensaje {
+    margin-left: 15%;
+    margin-top: 24px;
 }

@@ -1,83 +1,64 @@
 import { useEffect, useState } from "react";
 import DetalleCafe from "../detalleCafe/detalleCafe";
 import "./listaCafes.css"
-import { Col, Row } from "react-bootstrap";
+import { useIntl } from "react-intl";
 
 function ListaCafes(props) {
 
+  const intl = useIntl();
 
-  const cafes =[
-    {
-        "id": 1,
-        "nombre": "Café Especial para tí",
-        "tipo": "Blend",
-        "region": "Angelópolis, Antioquia"
-    },
-    {
-        "id": 2,
-        "nombre": "Café Especial Navegante",
-        "tipo": "Café de Origen",
-        "region": "Guatapé, Antioquia"
-    },
-    {
-        "id": 3,
-        "nombre": "Café Especial El Poeta",
-        "tipo": "Blend",
-        "region": "Gómez Plata, Antioquia"
-    },
-    {
-        "id": 4,
-        "nombre": "Café Especial Valentina",
-        "tipo": "Café de Origen",
-        "region": "Fredonia, Antioquia"
-    },
-    {
-        "id": 5,
-        "nombre": "Café Especial Sombrero Vueltiao",
-        "tipo": "Café de Origen",
-        "region": "Amagá, Antioquia"
-    },
-    {
-        "id": 6,
-        "nombre": "Café Especial La Guacamaya",
-        "tipo": "Café de Origen",
-        "region": "Amagá, Antioquia"
-    }
-]
+  const [cafes, setCafes] = useState([])
+  const [cafeSeleccionado, setCafeSeleccionado] = useState(null);
 
 
+  useEffect(()=>{
+    fetch("http://localhost:3001/cafes")
+    .then(response => response.json())
+    .then(data => setCafes(data));
+  },[])
+
+
+  const mostrarDetalleCafe = (cafe) => {
+    fetch("http://localhost:3001/cafes/"+cafe.id)
+      .then((response) => response.json())
+      .then((data) => setCafeSeleccionado(data))
+      .catch((error) => {
+        console.error("Error al obtener la lista de cafés:", error);
+      });
+  };
 
   
-    return (
-      <div className="App">
-        <header className="App-header">
-          
-        <textarea value={cafes}></textarea>
-          <div className="container">
-            <h1>Listado de cafés</h1>              
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Nombre</th>
-                  <th scope="col">Tipo</th>
-                  <th scope="col">Región</th>
-                </tr>
-              </thead>
-              <tbody>
-                {cafes.map(cafe => <tr>
-                  <th scope="row">{cafe.id}</th>
-                  <td>{cafe.nombre}</td>
-                  <td>{cafe.tipo}</td>
-                  <td>{cafe.region}</td>
-                  </tr>)}
-              </tbody>
-            </table>
-          
-        </div>
-        </header>
+  return (
+    <div className="contenido">    
+      <div className="tablita">
+          <table className="table">
+            <thead className="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">{intl.formatMessage({ id: "Nombre" })}</th>
+                <th scope="col">{intl.formatMessage({ id: "Tipo" })}</th>
+                <th scope="col">{intl.formatMessage({ id: "Región" })}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cafes.map(cafe => <tr key={cafe.id} onClick={() => mostrarDetalleCafe(cafe)}>
+                <th scope="row">{cafe.id}</th>
+                <td>{cafe.nombre}</td>
+                <td>{cafe.tipo}</td>
+                <td>{cafe.region}</td>
+                </tr>)}
+            </tbody>
+          </table>
+          </div>
+          {cafeSeleccionado && (
+          <div className="detalle">
+            <DetalleCafe cafe={cafeSeleccionado} />
+          </div>
+          )}
       </div>
-    );
+        
+
+  );
 
    
 }
